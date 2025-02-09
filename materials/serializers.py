@@ -9,7 +9,7 @@ class LessonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lesson
         fields = "__all__"
-        validators = [UrlValidator(field='video_url')]
+        validators = [UrlValidator(field="video_url")]
 
 
 class CourseSerializer(serializers.ModelSerializer):
@@ -21,7 +21,7 @@ class CourseSerializer(serializers.ModelSerializer):
         return Lesson.objects.filter(course=course).count()
 
     def get_is_subscribe(self, course):
-        request = self.context.get('request')
+        request = self.context.get("request")
         if request and request.user.is_authenticated:
             return Subscribe.objects.filter(user=request.user, course=course).exists()
         return False
@@ -29,4 +29,3 @@ class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = ("name", "description", "count_lessons_in_course", "is_subscribe", "lessons")
-

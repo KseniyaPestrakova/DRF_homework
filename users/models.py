@@ -36,8 +36,10 @@ class Payments(models.Model):
     payment_date = models.DateTimeField(auto_now_add=True)
     course = models.ForeignKey(Course, on_delete=models.CASCADE, blank=True, null=True, related_name="course")
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, blank=True, null=True, related_name="lesson")
-    payment_amount = models.FloatField()
+    payment_amount = models.PositiveIntegerField()
     payment_method = models.CharField(max_length=12, choices=STATUS_CHOICES)
+    session_id = models.CharField(max_length=255, blank=True, null=True)
+    link = models.URLField(max_length=400, blank=True, null=True)
 
     def __str__(self):
         return f"{self.course if self.course else self.lesson} - {self.payment_date} - {self.payment_amount}"
@@ -49,7 +51,7 @@ class Payments(models.Model):
 
 class Subscribe(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="users_subscribe")
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, default='NULL', related_name="course_subscribe")
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, default="NULL", related_name="course_subscribe")
 
     def __str__(self):
         return f"Подписка на курс id{self.course} для пользователя id{self.user}"
