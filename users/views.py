@@ -2,9 +2,11 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import IsAuthenticated
-
-from users.models import Payments, User
-from users.serializers import PaymentsSerializer, UserSerializer
+from rest_framework.views import APIView
+from users.models import Payments, User, Subscribe, Course
+from users.serializers import PaymentsSerializer, UserSerializer, SubscribeSerializer
+from django.shortcuts import get_object_or_404
+from rest_framework.response import Response
 
 
 class PaymentsCreateAPIView(generics.CreateAPIView):
@@ -60,3 +62,23 @@ class UserDestroyAPIView(generics.DestroyAPIView):
     serializer_class = UserSerializer
     queryset = User.objects.all()
     permission_classes = [IsAuthenticated]
+
+
+class SubscribeAPIView(APIView):
+    serializer_class = SubscribeSerializer
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        course_id = request.data.get('course')
+        course = get_object_or_404(Course, id=course_id)
+
+        subscribe, created = Subscribe.objects.get_or_create(user=user, course=course)
+
+        if created:
+            message = 'Подписка добавлена'
+        else:
+            subscribe.delete()
+            message = 'Подписка удалена'
+
+        return Response({"message": message})

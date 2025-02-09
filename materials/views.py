@@ -1,6 +1,7 @@
 from rest_framework import generics, viewsets
 from rest_framework.permissions import IsAuthenticated
 from materials.models import Course, Lesson
+from materials.paginators import MaterialsPaginator
 from materials.serializers import CourseSerializer, LessonSerializer
 from users.permissions import IsModerator, IsOwner
 
@@ -9,6 +10,7 @@ class CourseViewSet(viewsets.ModelViewSet):
     serializer_class = CourseSerializer
     queryset = Course.objects.all()
     permission_classes = [IsAuthenticated]
+    pagination_class = MaterialsPaginator
 
     def perform_create(self, serializer):
         course = serializer.save()
@@ -39,6 +41,7 @@ class LessonListAPIView(generics.ListAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
     permission_classes = [IsAuthenticated, IsModerator | IsOwner,]
+    pagination_class = MaterialsPaginator
 
 
 class LessonRetrieveAPIView(generics.RetrieveAPIView):
@@ -56,4 +59,4 @@ class LessonUpdateAPIView(generics.UpdateAPIView):
 class LessonDestroyAPIView(generics.DestroyAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
-    permission_classes = [IsAuthenticated, ~IsModerator & IsOwner]
+    permission_classes = [IsAuthenticated, ~IsModerator | IsOwner]
