@@ -16,6 +16,8 @@ ipython = "^8.32.0"
 django-filter = "^24.3"
 djangorestframework-simplejwt = "^5.4.0"
 coverage = "^7.6.11"
+drf-yasg = "^1.21.8"
+stripe = "^11.5.0"
 
 
 [tool.poetry.group.dev.dependencies]
