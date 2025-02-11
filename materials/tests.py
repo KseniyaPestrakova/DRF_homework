@@ -1,8 +1,9 @@
-from rest_framework.test import APITestCase
-from rest_framework import status
 from django.urls import reverse
-from materials.models import Lesson, Course
-from users.models import User, Subscribe
+from rest_framework import status
+from rest_framework.test import APITestCase
+
+from materials.models import Course, Lesson
+from users.models import Subscribe, User
 
 
 class LessonTestCase(APITestCase):
