@@ -1,8 +1,14 @@
-from rest_framework import generics, viewsets
+from django.shortcuts import get_object_or_404
+from rest_framework import generics, status, viewsets
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+
 from materials.models import Course, Lesson
 from materials.paginators import MaterialsPaginator
 from materials.serializers import CourseSerializer, LessonSerializer
+from materials.tasks import send_update_course
+from users.models import Subscribe
 from users.permissions import IsModerator, IsOwner
 
 
@@ -25,6 +31,13 @@ class CourseViewSet(viewsets.ModelViewSet):
         elif self.action in ["update", "retrieve"]:
             self.permission_classes = (IsModerator | IsOwner,)
         return super().get_permissions()
+
+    def perform_update(self, serializer):
+        course = serializer.save()
+        subscribers = Subscribe.objects.filter(course=course.pk)
+        for subscriber in subscribers:
+            send_update_course.delay(subscriber.user.email, course.name)
+        course.save()
 
 
 class LessonCreateAPIView(generics.CreateAPIView):
