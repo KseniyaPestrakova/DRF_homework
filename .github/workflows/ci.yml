@@ -55,13 +55,9 @@ jobs:
         run: |
           echo "${{ secrets.DOTENV }}" > .env
 
-      - name: Log in Docker Hub
-        run: echo "${{ secrets.DOCKER_ACCESS_TOKEN }}" | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
-
-      - name: Set up Docker permissions
+      - name: Log in to Docker Hub
         run: |
-          sudo usermod -aG docker $USER
-          sudo newgrp docker
+          echo "${{ secrets.DOCKER_ACCESS_TOKEN }}" | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
 
       - name: Build Docker image
         run: sudo docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/myapp:${{ github.sha }} .
