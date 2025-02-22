@@ -1,8 +1,6 @@
 # Используем официальный slim-образ Python 3.12
 FROM python:3.12-slim
 
-RUN pip install poetry
-
 # Устанавливаем переменные окружения для poetry
 ENV POETRY_VIRTUALENVS_CREATE=false \
     POETRY_NO_INTERACTION=1
@@ -11,10 +9,8 @@ ENV POETRY_VIRTUALENVS_CREATE=false \
 WORKDIR /app
 
 # Копируем файл зависимостей в контейнер
-COPY pyproject.toml poetry.lock /app/
-
-# Устанавливаем зависимости Python
-RUN poetry install --no-root
+COPY requirements.txt ./
+RUN pip install -r requirements.txt
 
 # Копируем остальные файлы проекта в контейнер
 COPY . .
